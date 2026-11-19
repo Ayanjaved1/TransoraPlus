@@ -1,10 +1,38 @@
-# Transora
-Extract the ZIP before starting. On Windows, install Python 3.10+ and double-click Start-Transora.cmd. Keep its terminal open. On macOS/Linux run python3 server.py --open. The app opens on http://127.0.0.1:8000. Set PORT to choose another port.
+# TransoraPlus
 
-The supplied Transora landing page is the home screen. Create an account with a display name, email and password. Choose a course card to enter the visual studio. Its editor, interpreter recording panel, challenges, drafts, completion counts and community replies share the same account. React, database and Tech ASL starter lessons use short-answer checks. This edition includes ten introductory exercises. The landing page's broader catalogue, testimonials and institutional references are inherited prototype content. Paid subscriptions, certificates and live study rooms are not implemented.
+TransoraPlus is a visual coding studio for Deaf and hard-of-hearing learners. A learner can open an exercise, write code and follow an instructor’s signed explanation alongside the editor. Keeping the recording beside the exercise lets the learner move between an explanation and the code it describes.
 
-The Python backend serves both pages and stores users, sessions, progress and discussions in studio.sqlite3. Email identifies accounts; passwords are salted and hashed with scrypt. The browser holds an HTTP-only session cookie. Keep this local demo on the loopback interface. Signed recordings are supplied by instructors; attach a local video and optionally a three-cue WebVTT file in the companion panel.
+## Try a lesson
 
-JavaScript and HTML exercises run locally in the browser. Python exercises download Pyodide; syntax tools and the original Three.js scene also use CDN assets. The homepage has an offline CSS 3D fallback. Java requires a running Docker engine and docker pull eclipse-temurin:21-jdk.
+1. Start the app locally using the instructions below and create a demo account.
+2. Choose a course card and open one of the ten introductory exercises.
+3. Try an HTML or JavaScript challenge in the browser. Save a draft, return to the lesson and check your progress.
+4. To try the interpreter panel, attach a local signed recording. You can also supply a three-cue WebVTT caption file.
 
-For open-ended AI answers, set OPENAI_API_KEY in the server environment before launch. In PowerShell use $env:OPENAI_API_KEY = 'your-key' and then run py server.py --open. OPENAI_MODEL optionally overrides gpt-4o-mini. Only submitted questions, lesson context and relevant editor text are sent to the provider. Without credentials the guide serves authored help. Keys belong on the server.
+## How it works
+
+| Component | Role |
+| --- | --- |
+| Python and SQLite | Serve the landing page and studio, manage sessions and persist learner progress and discussions. |
+| Browser editor | Runs HTML and JavaScript locally. Python exercises load Pyodide. |
+| Learning guide | Provides authored hints by default. An optional server-side AI integration answers questions using lesson context and relevant editor text. |
+| Starter lessons | React, database and technical ASL exercises use short-answer checks. |
+
+## Run locally
+
+Install Python 3.10 or later. If you downloaded the ZIP, extract it first. Run the launcher from the directory containing `server.py`.
+
+| Platform | Start the studio |
+| --- | --- |
+| Windows | Double-click `Start-Transora.cmd` and keep the terminal open. |
+| macOS or Linux | Run `python3 server.py --open`. |
+
+Open `http://127.0.0.1:8000`. Set `PORT` to choose another port. Keep this demo on the loopback interface. The backend stores account and learning data in `studio.sqlite3`, hashes passwords with scrypt and uses an HTTP-only session cookie.
+
+## Optional features
+
+- **Java exercises** require a running Docker engine and the image downloaded with `docker pull eclipse-temurin:21-jdk`.
+- **AI answers** require `OPENAI_API_KEY` in the server environment. Set `OPENAI_MODEL` to override the default `gpt-4o-mini`. Submitted questions, lesson context and relevant editor text go to the provider.
+- **Network access** is used for Pyodide, syntax tools and the Three.js scene. The homepage includes an offline CSS 3D fallback.
+
+The working demo includes ten exercises. The wider catalogue, testimonials and institutional references on the landing page are prototype content. Paid subscriptions, certificates and live study rooms are outside this release.
