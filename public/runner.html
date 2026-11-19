@@ -1,0 +1,28 @@
+<!doctype html><meta charset="utf-8"><script>
+onmessage=async event=>{
+ if(event.source!==parent)return;
+ const {code,language}=event.data;
+ const task=async ({data})=>{
+  let lines=[],size=0;
+  function log(...items){const line=items.map(x=>typeof x==="object"?JSON.stringify(x):String(x)).join(" ");size+=line.length+1;if(size>32000)throw Error("Output limit reached.");lines.push(line)}
+  try{
+   if(data.language==="Python"){
+    const base="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/";
+    importScripts(base+"pyodide.js");
+    const py=await loadPyodide({indexURL:base,stdout:log,stderr:log});
+    await py.runPythonAsync(data.code);
+   }else{console.log=console.info=console.warn=console.error=log;await (new Function(data.code))()}
+   postMessage({ok:true,output:lines.join("\n")})
+  }catch(err){postMessage({ok:false,output:String(err)})}
+ };
+ let worker;
+ try{
+  const url=URL.createObjectURL(new Blob(["onmessage="+task.toString()],{type:"text/javascript"}));
+  worker=new Worker(url);
+  const finish=result=>{clearTimeout(timer);worker.terminate();URL.revokeObjectURL(url);parent.postMessage(result,"*")};
+  const timer=setTimeout(()=>finish({ok:false,output:"Runtime timed out. Python needs internet access on first load."}),language==="Python"?60000:4000);
+  worker.onmessage=e=>finish(e.data);worker.onerror=e=>finish({ok:false,output:e.message||"Runtime unavailable."});
+  worker.postMessage({code,language})
+ }catch(e){parent.postMessage({ok:false,output:String(e)},"*")}
+};
+</script>

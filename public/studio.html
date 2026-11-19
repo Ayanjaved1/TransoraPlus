@@ -1,0 +1,37 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Transora · Signal studio</title><link rel="stylesheet" href="style.css"><style>body{background:#f0f6fb;color:#102c42}.hero,.float,.primary{background:#104967}.card:nth-child(n){background:#d8ecf5}.card:nth-child(2n){background:#d8efe9}.hero em{color:#8de7e6}</style><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"><style>.nav-logo {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+            text-decoration: none
+        }
+.nav-logo-text {
+            font-family: var(--fh);
+            font-size: 1.45rem;
+            font-weight: 800;
+            letter-spacing: -.5px;
+            color: #0d1f2d
+        }
+.nav-logo-text span {
+            background: linear-gradient(90deg, #1a7fa8, #2563a8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent
+        }.nav-logo-text{font-family:"Plus Jakarta Sans",sans-serif}</style></head><body>
+<header><a href="/" aria-label="Transora home" class="nav-logo">
+            <svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs><linearGradient id="ngl" x1="0" y1="0" x2="38" y2="38" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#1a7fa8"/><stop offset="100%" stop-color="#2563a8"/></linearGradient></defs>
+      <rect width="38" height="38" rx="10" fill="url(#ngl)" opacity="0.15"/>
+      <rect width="38" height="38" rx="10" fill="none" stroke="url(#ngl)" stroke-width="1"/>
+      <path d="M10 24 L10 15 Q10 13 12 13 Q14 13 14 15 L14 20" stroke="url(#ngl)" stroke-width="2" stroke-linecap="round" fill="none"/>
+      <path d="M14 18 Q14 12 17 12 Q19.5 12 19.5 15 L19.5 20" stroke="url(#ngl)" stroke-width="2" stroke-linecap="round" fill="none"/>
+      <path d="M19.5 18 Q19.5 13 22 13 Q24 13 24 16 L24 20" stroke="url(#ngl)" stroke-width="2" stroke-linecap="round" fill="none"/>
+      <path d="M24 19 Q24 15 26.5 15 Q28 15 28 18 L28 24 Q28 28 24 28 L14 28 Q10 28 10 24" stroke="url(#ngl)" stroke-width="2" stroke-linecap="round" fill="none"/>
+    </svg>
+            <span class="nav-logo-text">Trans<span>ora</span></span>
+        </a><nav><a href="#courses">Courses</a><a href="#studio">Studio</a><a href="#community">Community</a></nav><button id="account">Sign in</button></header>
+<main><section class="hero"><div class="intro"><span class="over">VISUAL CODE LAB</span><h1>Code in<br><em>motion.</em></h1><p>A visual coding studio for deaf and hard-of-hearing learners.</p><a class="primary" href="#studio">Open workspace ↗</a></div><div class="art"><canvas id="sculpt" aria-label="Rotating three-dimensional woven signal sculpture"></canvas><div class="plate"><span>FIG. 01 &nbsp; / &nbsp; SIGNAL KNOT</span><button id="motion">Pause motion</button></div></div></section>
+<section id="courses"><div class="sectionhead"><h2>Learning tracks</h2><span id="progress"></span></div><div id="cards"></div></section>
+<section id="studio"><div class="sectionhead"><h2>Lesson studio</h2><select aria-label="Choose lesson" id="pick"></select></div><div class="desk"><article><span id="lang" class="over"></span><h3 id="title"></h3><p id="task"></p><label for="editor">Code editor</label><textarea id="editor" spellcheck="false"></textarea><div class="actions"><button class="primary" id="run">Run & check ▷</button><button id="save">Save draft</button></div><label>Output</label><pre id="out" aria-live="polite">Ready to run.</pre><iframe id="preview" sandbox="" title="HTML result" hidden></iframe></article>
+<aside><span class="over">VISUAL COMPANION</span><h3>Lesson cues</h3><div class="cue"><small id="step"></small><p id="cue"></p></div><div class="actions"><button id="prev" aria-label="Previous cue">←</button><button id="next" aria-label="Next cue">→</button></div><details><summary>Interpreter video</summary><p>Attach a recording for this lesson. Cues follow playback in three equal sections.</p><input id="clip" type="file" accept="video/*" aria-label="Interpreter recording"><video id="video" controls playsinline></video><label>Speed <select id="speed"><option>1</option><option>0.75</option><option>0.5</option><option>1.25</option></select></label></details></aside></div></section>
+<section id="community"><div class="sectionhead"><h2>Community notebook</h2></div><form id="postform"><label for="message">Share a question or a code review</label><textarea id="message" required maxlength="2000" rows="3"></textarea><button>Publish post</button></form><div id="posts"></div></section></main>
+<button id="bot" class="float">✦ Ask Transora</button><dialog id="chat"><button class="close" aria-label="Close">×</button><span class="over">STUDIO ASSISTANT</span><h2>Ask Transora</h2><p id="mode"></p><div id="log" role="log"></div><form id="ask"><label for="question">Your question</label><textarea id="question" required maxlength="4000"></textarea><button class="primary">Send question ↗</button></form></dialog>
+<dialog id="auth"><button class="close" aria-label="Close">×</button><h2>Learner account</h2><form id="login"><label>Email<input id="email" type="email" autocomplete="email" required></label><label>Display name (new accounts)<input id="name" maxlength="40" autocomplete="username"></label><label>Password<input id="pwd" required minlength="8" type="password"></label><div class="actions"><button class="primary" value="login">Sign in</button><button value="register">Create account</button></div><p id="authmsg" role="status"></p></form></dialog><p class="toast" id="notice" role="status"></p><script src="sculpt.js"></script><script src="studio.js"></script><script src="extensions.js"></script></body></html>
