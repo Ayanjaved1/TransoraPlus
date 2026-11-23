@@ -1,0 +1,15 @@
+<!doctype html><meta charset="utf-8"><title>Transora signed questions</title>
+<h1>Signed coding questions</h1><select id="language" aria-label="Sign language"><option>ISL</option><option>ASL</option></select>
+<select id="course" aria-label="Course"><option>Python</option><option>Java</option><option>HTML</option><option>CSS</option></select>
+<button id="record">Record question</button><button id="finish" disabled>Finish question</button><button id="replay" disabled>Replay answer</button>
+<p role="status" id="status"></p><video id="camera" autoplay muted playsinline width="320"></video><canvas id="avatar" width="640" height="480" aria-label="Signed answer animation"></canvas>
+<script type="module">
+const $=id=>document.getElementById(id);let rec,stream,timer,animation,last;
+function play(){clearInterval(animation);let i=0;const ctx=$('avatar').getContext('2d');const edges=[[1,2],[1,3],[3,5],[2,4],[4,6]];
+for(const base of [7,28])for(const chain of [[0,1,2,3,4],[0,5,6,7,8],[5,9,10,11,12],[9,13,14,15,16],[13,17,18,19,20],[0,17]])for(let k=1;k<chain.length;k++)edges.push([base+chain[k-1],base+chain[k]]);
+function draw(){const f=last.frames[i++];ctx.clearRect(0,0,640,480);ctx.lineWidth=3;for(const [a,b] of edges){ctx.beginPath();ctx.moveTo(f[a][0]*640,f[a][1]*480);ctx.lineTo(f[b][0]*640,f[b][1]*480);ctx.stroke();}for(const [x,y] of f){ctx.beginPath();ctx.arc(x*640,y*480,2,0,7);ctx.fill();}if(i>=last.frames.length)clearInterval(animation);}
+animation=setInterval(draw,1000/last.fps);draw();}
+$('replay').onclick=play;
+$('record').onclick=async()=>{const language=$('language').value,course=$('course').value;$('record').disabled=true;try{stream=await navigator.mediaDevices.getUserMedia({video:true,audio:false});$('camera').srcObject=stream;rec=new MediaRecorder(stream);const parts=[];rec.ondataavailable=e=>parts.push(e.data);rec.onstop=async()=>{clearTimeout(timer);stream.getTracks().forEach(t=>t.stop());$('finish').disabled=true;$('status').textContent='Processing question…';try{const form=new FormData();form.append('video',new Blob(parts,{type:rec.mimeType}),'question.webm');const r=await fetch('/ask/'+language+'?course='+course,{method:'POST',body:form});const body=await r.json();if(!r.ok)throw Error(body.detail);last=body;$('replay').disabled=false;play();$('status').textContent='';}catch(e){$('status').textContent=e.message;}finally{$('record').disabled=false;}};rec.start();$('finish').disabled=false;$('status').textContent='Sign your question';timer=setTimeout(()=>{if(rec.state==='recording')rec.stop();},20000);}catch(e){stream?.getTracks().forEach(t=>t.stop());$('record').disabled=false;$('status').textContent=e.message;}};
+$('finish').onclick=()=>{if(rec?.state==='recording')rec.stop();};
+</script>
