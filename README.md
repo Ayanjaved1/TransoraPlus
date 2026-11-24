@@ -2,6 +2,27 @@
 
 TransoraPlus is a visual coding studio for Deaf and hard-of-hearing learners. A learner can open an exercise, write code and follow an instructor’s signed explanation alongside the editor. Keeping the recording beside the exercise lets the learner move between an explanation and the code it describes.
 
+## Inside the signed tutoring experiment
+
+Imagine a learner pausing a Python loop and signing “Why does this stop at four?” Transora’s research goal is to answer that question in sign language beside the code. The first experiment tests the movement and translation pipeline behind that interaction.
+
+| First Indian Sign Language pilot | Result |
+| --- | --- |
+| Training data | Two iSign clips from source `1782bea75c7d` |
+| Validation data | Two clips from a separate source, `ee235596b76f` |
+| Run | One epoch; reported validation loss **3.6103** |
+| Checkpoint | The training task reloaded the 4.6 MiB checkpoint successfully |
+
+The pilot establishes that training and checkpoint loading work on this small sample. Translation quality, live conversation, and the intelligibility of generated signing still need evaluation with Deaf learners and fluent signers.
+
+[Explore the model and training guide](signed-ai/) · [View the PyTorch architecture](signed-ai/model.py) · [Explore the iSign research dataset](https://huggingface.co/datasets/Exploration-Lab/iSign)
+
+To repeat the pilot with authorized copies of the four clips, supply a CSV containing `language,split,source_video_id,video,text` and run the following from `signed-ai` after installing its requirements:
+
+```sh
+python train.py corpus.csv ISL --split-by source_video_id --epochs 1
+```
+
 ## Try a lesson
 
 1. Start the app locally using the instructions below and create a demo account.
