@@ -1,0 +1,23 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Transora signing practice</title>
+<style>body{font:18px system-ui;max-width:800px;margin:2rem auto;padding:1rem;color:#16352e}button,select,input{font:inherit;margin:.3rem;padding:.4rem}pre{background:#edf4f1;padding:1rem;white-space:pre-wrap}video{width:min(100%,340px);display:block}output{display:block;font-weight:600}</style>
+<h1>Transora signing practice</h1><label>Course <select id="course"></select></label><label>Sign language <select id="lang"><option>ISL</option><option>ASL</option></select></label><h2 id="title"></h2><p id="explain"></p><pre id="code"></pre><video id="signed" controls playsinline hidden></video><p id="media"></p><label>Attach a signed explanation for this lesson <input id="clip" type="file" accept="video/*"></label><p id="question"></p><input id="answer" aria-label="Your answer"><button id="check">Check answer</button><div id="actions"></div><h2>Practice signed commands</h2><p>Enable your camera. Choose a command, press Record example, and sign immediately. Record at least two examples each for two different commands. Keep the camera still. Then press Recognize and sign again.</p><button id="start">Enable camera</button><button id="stop">Stop camera</button><video id="cam" muted playsinline></video><select id="label" aria-label="Command"></select><button id="train">Record example</button><button id="predict">Recognize</button><output id="status" aria-live="polite"></output>
+<script type="module">
+import {courses,Tutor,capture} from './sign-tutor.mjs';
+const el=id=>document.getElementById(id), clips={}, sessions=new Map();
+let tutor,busy=false;
+for(const c of Object.keys(courses))el('course').add(new Option(c,c));
+for(const c of ['back','repeat','quiz','next']){
+ el('label').add(new Option(c,c));const b=document.createElement('button');b.textContent=c;b.onclick=()=>act(c);el('actions').append(b);
+}
+function select(){const c=el('course').value,l=el('lang').value,k=l+c;if(!sessions.has(k))sessions.set(k,new Tutor(c,l,clips));tutor=sessions.get(k);render();}
+function render(){const x=tutor.lesson();for(const [id,v] of Object.entries({title:x.title,explain:x.explanation,code:x.code,question:x.question,answer:''})){if(id==='answer')el(id).value=v;else el(id).textContent=v;}
+ const v=el('signed');v.pause();v.removeAttribute('src');v.hidden=!x.video;if(x.video)v.src=x.video;v.load();el('media').textContent=x.video?'Signed explanation attached.':'This lesson needs a signed recording in '+tutor.language+'.';el('clip').value='';el('status').textContent='';}
+function act(c){tutor.act(c);render();if(c==='quiz')el('answer').focus();if(c==='repeat'&&tutor.lesson().video)el('signed').play().catch(()=>{});}
+el('course').onchange=el('lang').onchange=select;select();
+el('clip').onchange=e=>{const f=e.target.files[0];if(f){const k=[tutor.language,tutor.course,tutor.index].join('/');if(clips[k])URL.revokeObjectURL(clips[k]);clips[k]=URL.createObjectURL(f);render();}};
+el('check').onclick=()=>el('status').textContent=tutor.answer(el('answer').value)?'Correct.':'Try again. Trace the example one step at a time.';
+el('start').onclick=async()=>{try{if(!el('cam').srcObject)el('cam').srcObject=await navigator.mediaDevices.getUserMedia({video:true,audio:false});await el('cam').play();}catch(e){el('status').textContent=e.message;}};
+el('stop').onclick=()=>{el('cam').srcObject?.getTracks().forEach(t=>t.stop());el('cam').srcObject=null;};
+async function record(train){if(busy)return;busy=true;const t=tutor,label=el('label').value;try{el('status').textContent='Recording now…';const x=await capture(el('cam'));if(t!==tutor)return;if(train){t.train(label,x);el('status').textContent=label+' examples: '+t.samples[label].length;}else{const c=t.recognize(x);if(c)act(c);el('status').textContent=c?'Recognized '+c:'Uncertain. Try again or add more examples.';}}catch(e){el('status').textContent=e.message;}finally{busy=false;}}
+el('train').onclick=()=>record(true);el('predict').onclick=()=>record(false);
+</script></html>
