@@ -17,9 +17,11 @@ def run(args):
     val = [r for r in rows if r["split"] == "validation"]
     if not train or not val:
         raise ValueError("Supply train and validation rows")
-    groups = lambda rows: {r["signer"] for r in rows}
-    if "" in groups(train + val) or groups(train) & groups(val):
-        raise ValueError("Assign each signer to exactly one split")
+    assigned = {}
+    for row in rows:
+        group = row.get(args.split_by, "").strip()
+        if not group or assigned.setdefault(group, row["split"]) != row["split"]:
+            raise ValueError(f"Each {args.split_by} needs one consistent split")
     vocab = dict(zip(["<unk>", "<start>", "<end>"], range(3)))
     for r in train:
         for word in tokens(r["text"]):
@@ -67,4 +69,5 @@ if __name__ == "__main__":
     p.add_argument("manifest")
     p.add_argument("language", choices=["ASL","ISL"])
     p.add_argument("--epochs", type=int, default=20)
+    p.add_argument("--split-by", choices=["signer", "source_video_id"], default="signer")
     run(p.parse_args())
